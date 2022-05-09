@@ -16,7 +16,6 @@ package scorecard
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/operator-framework/api/pkg/apis/scorecard/v1alpha3"
 	v1 "k8s.io/api/core/v1"
