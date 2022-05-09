@@ -21,6 +21,26 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
+func validateJSON(value string) error {
+	var js json.RawMessage
+	byteValue := []byte(value)
+	if err := json.Unmarshal(byteValue, &js); err != nil {
+		switch t := err.(type) {
+		case *json.SyntaxError:
+			jsn := string(byteValue[0:t.Offset])
+			jsn += "<--(see the invalid character)"
+			return fmt.Errorf("invalid character at %v\n %s", t.Offset, jsn)
+		case *json.UnmarshalTypeError:
+			jsn := string(byteValue[0:t.Offset])
+			jsn += "<--(see the invalid type)"
+			return fmt.Errorf("invalid value at %v\n %s", t.Offset, jsn)
+		default:
+			return err
+		}
+	}
+	return nil
+}
+
 // getTestResult fetches the test pod log and converts it into
 // Test format
 func (r PodTestRunner) getTestStatus(ctx context.Context, p *v1.Pod) (output *v1alpha3.TestStatus) {
@@ -30,6 +50,7 @@ func (r PodTestRunner) getTestStatus(ctx context.Context, p *v1.Pod) (output *v1
 	}
 	// marshal pod log into TestResult
 // 	err = json.Unmarshal(logBytes, &output)
+	err = validateJSON(string(logBytes))
 	if err != nil {
 		return convertErrorToStatus(err, string(logBytes))
 	}
