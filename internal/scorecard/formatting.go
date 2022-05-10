@@ -52,8 +52,9 @@ func (r PodTestRunner) getTestStatus(ctx context.Context, p *v1.Pod) (output *v1
 		return convertErrorToStatus(err, string(logBytes))
 	}
 	// marshal pod log into TestResult
-// 	err = json.Unmarshal(logBytes, &output)
-	err = validateJSON(string(logBytes))
+	err = json.Unmarshal(logBytes, &output)
+// 	err = validateJSON(string(logBytes))
+	fmt.Println("Unmarshall error", err)
 	if err != nil {
 		return convertErrorToStatus(err, string(logBytes))
 	}
