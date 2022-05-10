@@ -47,6 +47,7 @@ func validateJSON(value string) error {
 // Test format
 func (r PodTestRunner) getTestStatus(ctx context.Context, p *v1.Pod) (output *v1alpha3.TestStatus) {
 	logBytes, err := getPodLog(ctx, r.Client, p)
+	fmt.Println("Pod log error", err)
 	if err != nil {
 		return convertErrorToStatus(err, string(logBytes))
 	}
